@@ -1,20 +1,19 @@
 from django.contrib import admin, messages
-
-import hospital
-from .models import Hospital
 from django.utils.translation import ngettext
+
+from miniproj.api.hospital.models import Hospital
 
 admin.site.disable_action("delete_selected")
 
 
 class HospitalAdmin(admin.ModelAdmin):
     list_display = ("name", "address")
-    list_per_page = 4
+    list_per_page = 15
     exclude = ["is_deleted"]
     actions = ["delete_hospital"]
 
     def get_queryset(self, request):
-        return Hospital.objects.filter(is_deleted=False)
+        return Hospital.objects.filter(is_deleted=False).order_by("name")
 
     @admin.action(description="Delete selected hospital(s)")
     def delete_hospital(self, request, queryset):
@@ -24,7 +23,6 @@ class HospitalAdmin(admin.ModelAdmin):
 
     def delete_queryset(self, request, queryset):
         updated = queryset.update(is_deleted=1)
-        print("---- queryset: ", updated)
         self.message_user(
             request,
             ngettext(
@@ -38,4 +36,3 @@ class HospitalAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Hospital, HospitalAdmin)
-# Register your models here.
