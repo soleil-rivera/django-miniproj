@@ -62,7 +62,7 @@ class HospitalFilter(dfilters.FilterSet):
 
     class Meta:
         model = Hospital
-        fields = ["name"]
+        fields = ["id", "name", "address"]
 
 
 class HospitalViewset(viewsets.ModelViewSet):

@@ -16,10 +16,11 @@ class SampleSerializer(serializers.ModelSerializer):
         queryset=Patient.objects.filter(is_deleted=False)
     )
 
-    def validate_sample_id(self, value):
-        if value and Sample.objects.filter(sample_id=value).exists():
-            raise serializers.ValidationError("Sample ID already exists.")
-        return value
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        if instance.first_name:
+            rep["first_name"] = instance.first_name.first_name
+        return rep
 
     class Meta:
         model = Sample

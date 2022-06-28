@@ -9,7 +9,9 @@ from miniproj.constants import Validators
 class LabStorageSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        rep["orders"] = [g.id for g in instance.orders.filter(is_deleted=False)]
+        rep["orders"] = [
+            g.internal_id for g in instance.orders.filter(is_deleted=False)
+        ]
         return rep
 
     class Meta:

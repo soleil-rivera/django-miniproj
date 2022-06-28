@@ -12,6 +12,11 @@ class OrderFilter(dfilters.FilterSet):
     Filterset for Order
     """
 
+    id = dfilters.CharFilter(
+        field_name="id",
+        method="filter_by_id",
+        help_text="Filter results by Order ID",
+    )
     internal_id = dfilters.CharFilter(
         field_name="internal_id",
         method="filter_by_internal_id",
@@ -26,6 +31,11 @@ class OrderFilter(dfilters.FilterSet):
         field_name="sample",
         method="filter_by_sample",
         help_text="Filter results by Order sample",
+    )
+    patient = dfilters.CharFilter(
+        field_name="sample",
+        method="filter_by_patient",
+        help_text="Filter results by Order patient first name",
     )
     hospital = dfilters.CharFilter(
         field_name="hospital",
@@ -64,6 +74,12 @@ class OrderFilter(dfilters.FilterSet):
             (YYYY-MM-DD)",
     )
 
+    def filter_by_id(self, queryset, name, value):
+        """
+        Filter Order by its ID
+        """
+        return queryset.filter(id=value)
+
     def filter_by_internal_id(self, queryset, name, value):
         """
         Filter Order by internal_id
@@ -81,6 +97,12 @@ class OrderFilter(dfilters.FilterSet):
         Filter Order by sample
         """
         return queryset.filter(sample__sample_id__icontains=value)
+
+    def filter_by_patient(self, queryset, name, value):
+        """
+        Filter Order by physician
+        """
+        return queryset.filter(sample__first_name__first_name__icontains=value)
 
     def filter_by_hospital(self, queryset, name, value):
         """
@@ -107,7 +129,7 @@ class OrderViewset(viewsets.ModelViewSet):
         filters.SearchFilter,
         filters.OrderingFilter,
     ]
-    filter_class = OrderFilter
+    filterset_class = OrderFilter
     search_fields = ordering_fields = [
         "id",
         "internal_id",

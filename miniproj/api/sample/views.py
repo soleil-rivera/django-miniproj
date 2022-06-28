@@ -12,6 +12,11 @@ class SampleFilter(dfilters.FilterSet):
     Filterset for Sample
     """
 
+    id = dfilters.CharFilter(
+        field_name="id",
+        method="filter_by_id",
+        help_text="Filter results by Sample ID",
+    )
     sample_id = dfilters.CharFilter(
         field_name="sample_id",
         method="filter_by_sample_id",
@@ -35,6 +40,12 @@ class SampleFilter(dfilters.FilterSet):
         help_text="Filter results by Sample created date TO \
             (YYYY-MM-DD)",
     )
+
+    def filter_by_id(self, queryset, name, value):
+        """
+        Filter Sample by its ID
+        """
+        return queryset.filter(id=value)
 
     def filter_by_sample_id(self, queryset, name, value):
         """
@@ -61,7 +72,7 @@ class SampleViewset(viewsets.ModelViewSet):
         filters.SearchFilter,
         filters.OrderingFilter,
     ]
-    filter_class = SampleFilter
+    filterset_class = SampleFilter
     search_fields = ordering_fields = ["id", "sample_id", "first_name__first_name"]
 
     def destroy(self, request, *args, **kwargs):

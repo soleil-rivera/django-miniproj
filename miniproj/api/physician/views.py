@@ -12,6 +12,11 @@ class PhysicianFilter(dfilters.FilterSet):
     Filterset for Physician
     """
 
+    id = dfilters.CharFilter(
+        field_name="id",
+        method="filter_by_id",
+        help_text="Filter results by Physician ID",
+    )
     first_name = dfilters.CharFilter(
         field_name="first_name",
         method="filter_by_first_name",
@@ -50,6 +55,12 @@ class PhysicianFilter(dfilters.FilterSet):
         help_text="Filter results by Physician created date TO \
             (YYYY-MM-DD)",
     )
+
+    def filter_by_id(self, queryset, name, value):
+        """
+        Filter Physician by its ID
+        """
+        return queryset.filter(id=value)
 
     def filter_by_first_name(self, queryset, name, value):
         """
@@ -100,7 +111,7 @@ class PhysicianViewset(viewsets.ModelViewSet):
         filters.SearchFilter,
         filters.OrderingFilter,
     ]
-    filter_class = PhysicianFilter
+    filterset_class = PhysicianFilter
     search_fields = ordering_fields = [
         "id",
         "first_name",

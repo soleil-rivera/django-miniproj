@@ -1,5 +1,7 @@
 from email.policy import default
 from rest_framework import serializers
+from django.forms.models import model_to_dict
+
 from miniproj.api.order.models import Order
 from miniproj.api.sample.models import Sample
 from miniproj.api.hospital.models import Hospital
@@ -26,10 +28,15 @@ class OrderSerializer(serializers.ModelSerializer):
         queryset=Physician.objects.filter(is_deleted=False), required=False
     )
 
-    # def validate_internal_id(self, value):
-    #     if value and Order.objects.filter(internal_id=value).exists():
-    #         raise serializers.ValidationError("Internal ID already exists.")
-    #     return value
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        if instance.sample:
+            rep["sample"] = model_to_dict(instance.sample)
+        if instance.hospital:
+            rep["hospital"] = instance.hospital.name
+        if instance.physician:
+            rep["physician"] = instance.physician.first_name
+        return rep
 
     class Meta:
         model = Order

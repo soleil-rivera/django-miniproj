@@ -22,6 +22,11 @@ class LabStorageFilter(dfilters.FilterSet):
     Filterset for Lab Storage
     """
 
+    id = dfilters.CharFilter(
+        field_name="id",
+        method="filter_by_id",
+        help_text="Filter results by Lab Storage ID",
+    )
     name = dfilters.CharFilter(
         field_name="name",
         method="filter_by_name",
@@ -32,7 +37,11 @@ class LabStorageFilter(dfilters.FilterSet):
         method="filter_by_location",
         help_text="Filter results by Lab Storage location",
     )
-
+    orders = dfilters.CharFilter(
+        field_name="orders",
+        method="filter_by_orders",
+        help_text="Filter results by Lab Storage orders internal id",
+    )
     createddt_from = dfilters.DateFilter(
         field_name="created",
         lookup_expr="gte",
@@ -47,6 +56,12 @@ class LabStorageFilter(dfilters.FilterSet):
             (YYYY-MM-DD)",
     )
 
+    def filter_by_id(self, queryset, name, value):
+        """
+        Filter LabStorage by its ID
+        """
+        return queryset.filter(id=value)
+
     def filter_by_name(self, queryset, name, value):
         """
         Filter Lab Storage by its name
@@ -58,6 +73,12 @@ class LabStorageFilter(dfilters.FilterSet):
         Filter Lab Storage by location
         """
         return queryset.filter(location__icontains=value)
+
+    def filter_by_orders(self, queryset, name, value):
+        """
+        Filter Lab Storage by orders
+        """
+        return queryset.filter(orders__internal_id__icontains=value)
 
     class Meta:
         model = LabStorage
@@ -104,7 +125,7 @@ class LabStorageViewset(viewsets.ModelViewSet):
         filters.SearchFilter,
         filters.OrderingFilter,
     ]
-    filter_class = LabStorageFilter
+    filterset_class = LabStorageFilter
     search_fields = ordering_fields = [
         "id",
         "name",
