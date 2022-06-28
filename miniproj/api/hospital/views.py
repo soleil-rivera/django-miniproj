@@ -12,6 +12,11 @@ class HospitalFilter(dfilters.FilterSet):
     Filterset for Hospital
     """
 
+    id = dfilters.CharFilter(
+        field_name="id",
+        method="filter_by_id",
+        help_text="Filter results by hospital ID",
+    )
     name = dfilters.CharFilter(
         field_name="name",
         method="filter_by_name",
@@ -37,6 +42,12 @@ class HospitalFilter(dfilters.FilterSet):
             (YYYY-MM-DD)",
     )
 
+    def filter_by_id(self, queryset, name, value):
+        """
+        Filter Hospital by its ID
+        """
+        return queryset.filter(id=value)
+
     def filter_by_name(self, queryset, name, value):
         """
         Filter Hospital by its name
@@ -51,7 +62,7 @@ class HospitalFilter(dfilters.FilterSet):
 
     class Meta:
         model = Hospital
-        fields = ("name", "address")
+        fields = ["name"]
 
 
 class HospitalViewset(viewsets.ModelViewSet):
@@ -62,7 +73,7 @@ class HospitalViewset(viewsets.ModelViewSet):
         filters.SearchFilter,
         filters.OrderingFilter,
     ]
-    filter_class = HospitalFilter
+    filterset_class = HospitalFilter
     search_fields = ordering_fields = ["id", "name", "address"]
 
     def destroy(self, request, *args, **kwargs):
